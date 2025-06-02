@@ -1,0 +1,40 @@
+  /* Add dooray API */		
+	public void sendChatMessage(Object id,Object title) {
+		
+		    String href = "test.com"
+
+        JSONObject apiBody = new JSONObject();
+        apiBody.put("text", title + "\n" + href);
+
+        /* Test Chat ID */
+        String chattingRoomID = "ChattingRoomID";
+        String requestUrl = String.format("https://api.gov-dooray.com/messenger/v1/channels/%s/logs", chattingRoomID);
+
+        try {
+            URL url = new URL(requestUrl);
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            conn.setRequestProperty("Authorization", "dooray-api Your Dooray APIKey");
+
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = apiBody.toString().getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                System.out.println("Unauthorized: " + responseCode);
+            } else if (responseCode >= 200 && responseCode < 300) {
+                System.out.println("Success: " + responseCode);
+            } else {
+                System.out.println("Other Response: " + responseCode);
+            }
+
+            conn.disconnect();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+	}
